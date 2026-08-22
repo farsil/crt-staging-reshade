@@ -135,20 +135,20 @@ float4x4 GetHFilter()
 
 float3 CRTHyllian(sampler2D source, float2 uv, int2 size)
 {
-	float2 sourceSize = tex2Dsize(source) * float2(1.0, 1.0 + DoubleScan);
+	float2 sourceResolution = tex2Dsize(source) * float2(1.0 + DoubleScan, 1.0 + DoubleScan);
 	
-	float2 dx = lerp(float2(1.0 / sourceSize.x, 0.0),
-	                 float2(0.0, 1.0 / sourceSize.y),
+	float2 dx = lerp(float2(1.0 / sourceResolution.x, 0.0),
+	                 float2(0.0, 1.0 / sourceResolution.y),
 	                 VerticalScanlines);
 
-	float2 dy = lerp(float2(0.0, 1.0 / sourceSize.y),
-	                 float2(1.0 / sourceSize.x, 0.0),
+	float2 dy = lerp(float2(0.0, 1.0 / sourceResolution.y),
+	                 float2(1.0 / sourceResolution.x, 0.0),
 	                 VerticalScanlines);
 
-	float2 pixCoord = uv * sourceSize + float2(-0.5, 0.5);
+	float2 pixCoord = uv * sourceResolution + float2(-0.5, 0.5);
 
-	float2 tc = lerp((floor(pixCoord) + float2(0.5,  0.5)) / sourceSize,
-	                 (floor(pixCoord) + float2(1.0, -0.5)) / sourceSize,
+	float2 tc = lerp((floor(pixCoord) + float2(0.5,  0.5)) / sourceResolution,
+	                 (floor(pixCoord) + float2(1.0, -0.5)) / sourceResolution,
 	                 VerticalScanlines);
 
 	float2 fp = lerp(frac(pixCoord), frac(pixCoord.yx), VerticalScanlines);
