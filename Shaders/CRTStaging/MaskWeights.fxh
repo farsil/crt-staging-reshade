@@ -128,7 +128,7 @@ float3 MaskWeights(float2 coord, float mask_intensity, int phosphor_layout)
 
         weights = ap3[z];
         return weights;
-	}
+    }
     else if (phosphor_layout == 8) {
         // aperture_3_6_rgb
         float3 big_ap[7] = { red, red, yellow, green, cyan, blue, blue };
