@@ -2,11 +2,9 @@
 #define _CRT_1080P_FXH
 
 #include "ReShade.fxh"
+#include "Macros.fxh"
 #include "Resolution.fxh"
 #include "MaskWeights.fxh"
-
-#define GAMMA_IN(color)   pow((color), float3(InputGamma, InputGamma, InputGamma))
-#define GAMMA_OUT(color)  pow((color), float3(1.0 / OutputGamma, 1.0 / OutputGamma, 1.0 / OutputGamma))
 
 uniform float2 SpotSize <
     ui_label = "Spot Width / Height";
@@ -81,7 +79,7 @@ uniform float OutputGamma <
 float3 AddVGAOverlay(float3 color, float2 uv, float2 size)
 {
     // scanlines
-    float2 maskCoords = ceil(uv * size);
+    float2 maskCoords = uv * size;
 
     float3 lumFactors = float3(0.2126, 0.7152, 0.0722);
 

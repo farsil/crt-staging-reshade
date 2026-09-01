@@ -2,11 +2,9 @@
 #define _CRT_HYLLIAN_FXH
 
 #include "ReShade.fxh"
+#include "Macros.fxh"
 #include "Resolution.fxh"
 #include "MaskWeights.fxh"
-
-#define GAMMA_IN(color)   pow((color), float3(InputGamma, InputGamma, InputGamma))
-#define GAMMA_OUT(color)  pow((color), float3(1.0 / OutputGamma, 1.0 / OutputGamma, 1.0 / OutputGamma))
 
 uniform float ScanlinesStrength <
     ui_label = "Scanlines Strength";
@@ -203,7 +201,7 @@ float3 CRTHyllian(sampler2D source, float2 uv, int2 size)
     float3 color = ColorBoost * (color0 * d0 + color1 * d1);
 
     // Mask
-    float2 maskCoords = ceil(uv * size);
+    float2 maskCoords = uv * size;
     maskCoords        = lerp(maskCoords.xy, maskCoords.yx, VerticalScanlines);
     color.rgb         *= MaskWeights(maskCoords, MaskIntensity, PhosphorLayout);
 
