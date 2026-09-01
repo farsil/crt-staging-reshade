@@ -30,7 +30,7 @@ uniform float2 ColorBoost <
     ui_label = "Color Boost (Even / Odd)";
     ui_type  = "drag";
     ui_min   = 0.0;
-    ui_max   = 4.0;
+    ui_max   = 5.0;
     ui_step  = 0.01;
     ui_category = "CRT Emulation";
 > = float2(2.5, 2.5);
