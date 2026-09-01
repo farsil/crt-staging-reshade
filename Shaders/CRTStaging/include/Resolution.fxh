@@ -1,6 +1,8 @@
 #ifndef _RESOLUTION_FXH
 #define _RESOLUTION_FXH
 
+#include "ReShade.fxh"
+
 #ifndef SOURCE_WIDTH
     #define SOURCE_WIDTH 320
 #endif
@@ -8,6 +10,31 @@
 #ifndef SOURCE_HEIGHT
     #define SOURCE_HEIGHT 200
 #endif
+
+#ifndef ENABLE_DOWNSCALE
+    #define ENABLE_DOWNSCALE 0
+#endif
+
+#if ENABLE_DOWNSCALE
+    uniform int2 OriginalSize <
+        ui_label = "Original Size";
+        ui_type  = "drag";
+        ui_min   = 0.0;
+        ui_max   = int2(BUFFER_WIDTH, BUFFER_HEIGHT);
+        ui_step  = 1;
+        ui_category = "Resolution";
+    > = int2(SOURCE_WIDTH, SOURCE_HEIGHT);
+#endif
+
+uniform int2 SourceSize <
+    ui_label = "Source Size";
+    ui_type  = "drag";
+    ui_tooltip = "Must be set via preprocessor definitions";
+    ui_category = "Resolution";
+    noedit = true;
+    nosave = true;
+    noreset = true;
+> = int2(SOURCE_WIDTH, SOURCE_HEIGHT);
 
 uniform int UpscalingStrategy <
     ui_label = "Upscaling Strategy";

@@ -3,6 +3,16 @@
 #include "include/ImageAdjustments.fxh"
 #include "include/CRT1080p.fxh"
 
+texture2D BackBufferTexture : COLOR;
+
+sampler2D BackBufferSampler
+{
+    Texture = BackBufferTexture;
+    MagFilter = POINT;
+    MinFilter = POINT;
+    MipFilter = POINT;
+};
+
 texture2D AdjustedImageTexture
 {
     Width = SOURCE_WIDTH;
@@ -19,9 +29,15 @@ sampler2D AdjustedImageSampler
 
 float3 ImageAdjustmentsPS(float2 adjustedImageUV : TEXCOORD) : SV_Target
 {
-    float2 bufferUV = ToBufferUV(adjustedImageUV, tex2Dsize(AdjustedImageSampler));
+    #if ENABLE_DOWNSCALE
+        int2 imageSize = OriginalSize;
+    #else
+        int2 imageSize = tex2Dsize(AdjustedImageSampler);
+    #endif
 
-    return ImageAdjustments(ReShade::BackBuffer, bufferUV);
+    float2 bufferUV = ToBufferUV(adjustedImageUV, imageSize);
+
+    return ImageAdjustments(BackBufferSampler, bufferUV);
 }
 
 float3 CRTEmulationPS(float2 bufferUV : TEXCOORD) : SV_Target
