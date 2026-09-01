@@ -1,5 +1,5 @@
-#ifndef SIZE_HELPERS_FXH
-#define SIZE_HELPERS_FXH
+#ifndef _RESOLUTION_FXH
+#define _RESOLUTION_FXH
 
 #include "ReShade.fxh"
 
@@ -10,6 +10,20 @@
 #ifndef SOURCE_HEIGHT
     #define SOURCE_HEIGHT 200
 #endif
+
+uniform int2 SourceSize <
+    ui_label = "Source Size";
+    ui_type = "drag";
+    ui_tooltip = "Must be changed via preprocessor definitions";
+    ui_category = "Resolution";
+    noedit = true;
+> = int2(SOURCE_WIDTH, SOURCE_HEIGHT);
+
+uniform bool DoubleScan <
+    ui_label = "Double Scan";
+    ui_type  = "radio";
+    ui_category = "Resolution";
+> = false;
 
 static const float2 CenterUV = 0.5;
 
@@ -42,4 +56,4 @@ float2 ToBufferUV(float2 uv, int2 size)
     return (uv * sizeUV) + minUV;
 }
 
-#endif // SIZE_HELPERS_FXH
+#endif // _RESOLUTION_FXH

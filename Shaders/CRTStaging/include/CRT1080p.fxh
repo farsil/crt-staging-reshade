@@ -1,8 +1,8 @@
-#ifndef CRT_1080P_FXH
-#define CRT_1080P_FXH
+#ifndef _CRT_1080P_FXH
+#define _CRT_1080P_FXH
 
 #include "ReShade.fxh"
-#include "SizeHelpers.fxh"
+#include "Resolution.fxh"
 #include "MaskWeights.fxh"
 
 #define GAMMA_IN(color)   pow((color), float3(InputGamma, InputGamma, InputGamma))
@@ -71,12 +71,6 @@ uniform float OutputGamma <
     ui_category = "CRT Emulation";
 > = 2.48;
 
-uniform bool DoubleScan <
-    ui_label = "Double Scan";
-    ui_type  = "radio";
-    ui_category = "CRT Emulation";
-> = false;
-
 // Macro for weights computing
 #define WEIGHT(w) \
     if (w > 1.0) \
@@ -122,12 +116,10 @@ float3 AddVGAOverlay(float3 color, float2 uv, float2 size)
 
 float3 CRT1080pSingleScan(sampler2D source, float2 uv, int2 targetSize)
 {
-    float2 sourceSize = float2(SOURCE_WIDTH, SOURCE_HEIGHT);
-
-    float2 pixCoord = uv * sourceSize;
+    float2 pixCoord = uv * SourceSize;
     float2 pixCenter = floor(pixCoord) + float2(0.5, 0.5);
 
-    float2 tc = pixCenter / sourceSize;
+    float2 tc = pixCenter / SourceSize;
     float3 color = GAMMA_IN(tex2D(source, tc).rgb);
 
     float dx = pixCoord.x - pixCenter.x;
@@ -138,10 +130,10 @@ float3 CRT1080pSingleScan(sampler2D source, float2 uv, int2 targetSize)
     // get closest horizontal neighbour to blend
     float2 offX;
     if (dx > 0.0) {
-        offX = float2(1.0 / SOURCE_WIDTH, 0.0);
+        offX = float2(1.0 / SourceSize.x, 0.0);
         dx   = 1.0 - dx;
     } else {
-        offX = float2(-1.0 / SOURCE_WIDTH, 0.0);
+        offX = float2(-1.0 / SourceSize.x, 0.0);
         dx   = 1.0 + dx;
     }
 
@@ -162,10 +154,10 @@ float3 CRT1080pSingleScan(sampler2D source, float2 uv, int2 targetSize)
     // get closest vertical neighbour to blend
     float2 offY;
     if (dy > 0.0) {
-        offY = float2(0.0, 1.0 / SOURCE_HEIGHT);
+        offY = float2(0.0, 1.0 / SourceSize.y);
         dy   = 1.0 - dy;
     } else {
-        offY = float2(0.0, -1.0 / SOURCE_HEIGHT);
+        offY = float2(0.0, -1.0 / SourceSize.y);
         dy   = 1.0 + dy;
     }
     colorNb = GAMMA_IN(tex2D(source, tc + offY).rgb);
@@ -186,17 +178,15 @@ float3 CRT1080pSingleScan(sampler2D source, float2 uv, int2 targetSize)
 
 float3 Tex2DLinear(sampler2D source, float2 uv)
 {
-    float2 sourceSize = float2(SOURCE_WIDTH, SOURCE_HEIGHT);
-
     // subtract 0.5 here and add it again after the floor to centre the texel
-    float2 pixCoord = uv * sourceSize - float2(0.5, 0.5);
+    float2 pixCoord = uv * SourceSize - float2(0.5, 0.5);
 
     float2 s0t0 = floor(pixCoord) + float2(0.5, 0.5);
     float2 s0t1 = s0t0 + float2(0.0, 1.0);
     float2 s1t0 = s0t0 + float2(1.0, 0.0);
     float2 s1t1 = s0t0 + float2(1.0, 1.0);
 
-    float2 invSize = 1.0 / sourceSize;
+    float2 invSize = 1.0 / SourceSize;
 
     float3 c00 = GAMMA_IN(tex2D(source, s0t0 * invSize).rgb);
     float3 c01 = GAMMA_IN(tex2D(source, s0t1 * invSize).rgb);
@@ -213,12 +203,11 @@ float3 Tex2DLinear(sampler2D source, float2 uv)
 
 float3 CRT1080pDoubleScan(sampler2D source, float2 uv, int2 targetSize)
 {
-    float2 sourceSize = float2(SOURCE_WIDTH, SOURCE_HEIGHT);
-    float2 prescale = ceil(GetViewportSize() / sourceSize);
+    float2 prescale = ceil(GetViewportSize() / SourceSize);
 
     const float2 halfp  = float2(0.5, 0.5);
 
-    float2 texel        = uv * sourceSize;
+    float2 texel        = uv * SourceSize;
     float2 texelFloored = floor(texel);
     float2 s            = frac(texel);
     float2 regionRange  = halfp - halfp / prescale;
@@ -227,8 +216,8 @@ float3 CRT1080pDoubleScan(sampler2D source, float2 uv, int2 targetSize)
     float2 f = (centerDist - clamp(centerDist, -regionRange, regionRange)) *
                 prescale + halfp;
 
-    float2 modTexel = min(texelFloored + f, sourceSize - halfp);
-    float3 color    = Tex2DLinear(source, modTexel / sourceSize);
+    float2 modTexel = min(texelFloored + f, SourceSize - halfp);
+    float3 color    = Tex2DLinear(source, modTexel / SourceSize);
 
     color = AddVGAOverlay(color, uv, targetSize);
 
@@ -244,4 +233,4 @@ float3 CRT1080p(sampler2D source, float2 uv, int2 targetSize)
     }
 }
 
-#endif // CRT_1080P_FXH
+#endif // _CRT_1080P_FXH

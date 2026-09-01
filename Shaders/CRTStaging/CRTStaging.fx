@@ -1,5 +1,5 @@
 #include "ReShade.fxh"
-#include "include/SizeHelpers.fxh"
+#include "include/Resolution.fxh"
 #include "include/ImageAdjustments.fxh"
 
 #if BUFFER_HEIGHT > 1080

@@ -1,7 +1,8 @@
-#ifndef CRT_HYLLIAN_FXH
-#define CRT_HYLLIAN_FXH
+#ifndef _CRT_HYLLIAN_FXH
+#define _CRT_HYLLIAN_FXH
 
 #include "ReShade.fxh"
+#include "Resolution.fxh"
 #include "MaskWeights.fxh"
 
 #define GAMMA_IN(color)   pow((color), float3(InputGamma, InputGamma, InputGamma))
@@ -96,12 +97,6 @@ uniform int HorizontalFilter <
     ui_category = "CRT Emulation";
 > = 0;
 
-uniform bool DoubleScan <
-    ui_label = "Double Scan";
-    ui_type  = "radio";
-    ui_category = "CRT Emulation";
-> = false;
-
 uniform bool VerticalScanlines <
     ui_label = "Vertical Scanlines";
     ui_type  = "radio";
@@ -136,7 +131,7 @@ float4x4 GetHFilter()
 
 float3 CRTHyllian(sampler2D source, float2 uv, int2 size)
 {
-    float2 sourceResolution = tex2Dsize(source) * float2(1.0 + DoubleScan, 1.0 + DoubleScan);
+    float2 sourceResolution = SourceSize * float2(1.0 + DoubleScan, 1.0 + DoubleScan);
 
     float2 dx = lerp(float2(1.0 / sourceResolution.x, 0.0),
                      float2(0.0, 1.0 / sourceResolution.y),
@@ -214,4 +209,4 @@ float3 CRTHyllian(sampler2D source, float2 uv, int2 size)
     return clamp(GAMMA_OUT(color), 0.0, 1.0);
 }
 
-#endif // CRT_HYLLIAN_FXH
+#endif // _CRT_HYLLIAN_FXH

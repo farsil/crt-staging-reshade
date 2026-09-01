@@ -1,5 +1,5 @@
-#ifndef IMAGE_ADJUSTMENTS_FXH
-#define IMAGE_ADJUSTMENTS_FXH
+#ifndef _IMAGE_ADJUSTMENTS_FXH
+#define _IMAGE_ADJUSTMENTS_FXH
 
 uniform float Saturation <
     ui_label = "Saturation";
@@ -489,4 +489,4 @@ float3 ImageAdjustments(sampler2D source, float2 uv)
     return color;
 }
 
-#endif // IMAGE_ADJUSTMENTS_FXH
+#endif // _IMAGE_ADJUSTMENTS_FXH

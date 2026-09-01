@@ -1,5 +1,5 @@
-#ifndef MASK_WEIGHTS_FXH
-#define MASK_WEIGHTS_FXH
+#ifndef _MASK_WEIGHTS_FXH
+#define _MASK_WEIGHTS_FXH
 
 #include "ReShade.fxh"
 
@@ -303,4 +303,4 @@ float3 MaskWeights(float2 coord, float mask_intensity, int phosphor_layout)
     }
 }
 
-#endif // MASK_WEIGHTS_FXH
+#endif // _MASK_WEIGHTS_FXH
