@@ -1,14 +1,7 @@
 #include "ReShade.fxh"
 #include "include/Resolution.fxh"
 #include "include/ImageAdjustments.fxh"
-
-#if BUFFER_HEIGHT > 1080
-    #include "include/CRTHyllian.fxh"
-    #define CRT_EMULATION CRTHyllian
-#else
-    #include "include/CRT1080p.fxh"
-    #define CRT_EMULATION CRT1080p
-#endif
+#include "include/CRTHyllian.fxh"
 
 texture2D AdjustedImageTexture
 {
@@ -39,10 +32,10 @@ float3 CRTEmulationPS(float2 bufferUV : TEXCOORD) : SV_Target
     if (any(viewportUV < 0.0) || any(viewportUV > 1.0))
         discard;
 
-    return CRT_EMULATION(AdjustedImageSampler, viewportUV, viewportSize);
+    return CRTHyllian(AdjustedImageSampler, viewportUV, viewportSize);
 }
 
-technique CrtStaging
+technique CRTHyllian
 {
    pass ImageAdjustments
    {

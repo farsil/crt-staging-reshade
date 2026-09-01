@@ -131,7 +131,7 @@ float4x4 GetHFilter()
 
 float3 CRTHyllian(sampler2D source, float2 uv, int2 size)
 {
-    float2 sourceResolution = SourceSize * float2(1.0 + DoubleScan, 1.0 + DoubleScan);
+    float2 sourceResolution = SourceSize * (1.0 + DoubleScan);
 
     float2 dx = lerp(float2(1.0 / sourceResolution.x, 0.0),
                      float2(0.0, 1.0 / sourceResolution.y),

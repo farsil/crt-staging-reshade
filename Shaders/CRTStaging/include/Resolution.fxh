@@ -17,6 +17,8 @@ uniform int2 SourceSize <
     ui_tooltip = "Must be changed via preprocessor definitions";
     ui_category = "Resolution";
     noedit = true;
+    nosave = true;
+    noreset = true;
 > = int2(SOURCE_WIDTH, SOURCE_HEIGHT);
 
 uniform bool DoubleScan <
