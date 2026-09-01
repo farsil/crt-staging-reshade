@@ -116,10 +116,12 @@ float3 AddVGAOverlay(float3 color, float2 uv, float2 size)
 
 float3 CRT1080pSingleScan(sampler2D source, float2 uv, int2 targetSize)
 {
-    float2 pixCoord = uv * SourceSize;
+    int2 sourceSize = tex2Dsize(source);
+    
+    float2 pixCoord = uv * sourceSize;
     float2 pixCenter = floor(pixCoord) + float2(0.5, 0.5);
 
-    float2 tc = pixCenter / SourceSize;
+    float2 tc = pixCenter / sourceSize;
     float3 color = GAMMA_IN(tex2D(source, tc).rgb);
 
     float dx = pixCoord.x - pixCenter.x;
@@ -130,10 +132,10 @@ float3 CRT1080pSingleScan(sampler2D source, float2 uv, int2 targetSize)
     // get closest horizontal neighbour to blend
     float2 offX;
     if (dx > 0.0) {
-        offX = float2(1.0 / SourceSize.x, 0.0);
+        offX = float2(1.0 / sourceSize.x, 0.0);
         dx   = 1.0 - dx;
     } else {
-        offX = float2(-1.0 / SourceSize.x, 0.0);
+        offX = float2(-1.0 / sourceSize.x, 0.0);
         dx   = 1.0 + dx;
     }
 
@@ -154,10 +156,10 @@ float3 CRT1080pSingleScan(sampler2D source, float2 uv, int2 targetSize)
     // get closest vertical neighbour to blend
     float2 offY;
     if (dy > 0.0) {
-        offY = float2(0.0, 1.0 / SourceSize.y);
+        offY = float2(0.0, 1.0 / sourceSize.y);
         dy   = 1.0 - dy;
     } else {
-        offY = float2(0.0, -1.0 / SourceSize.y);
+        offY = float2(0.0, -1.0 / sourceSize.y);
         dy   = 1.0 + dy;
     }
     colorNb = GAMMA_IN(tex2D(source, tc + offY).rgb);
@@ -178,15 +180,17 @@ float3 CRT1080pSingleScan(sampler2D source, float2 uv, int2 targetSize)
 
 float3 Tex2DLinear(sampler2D source, float2 uv)
 {
+    int2 sourceSize = tex2Dsize(source);
+
     // subtract 0.5 here and add it again after the floor to centre the texel
-    float2 pixCoord = uv * SourceSize - float2(0.5, 0.5);
+    float2 pixCoord = uv * sourceSize - float2(0.5, 0.5);
 
     float2 s0t0 = floor(pixCoord) + float2(0.5, 0.5);
     float2 s0t1 = s0t0 + float2(0.0, 1.0);
     float2 s1t0 = s0t0 + float2(1.0, 0.0);
     float2 s1t1 = s0t0 + float2(1.0, 1.0);
 
-    float2 invSize = 1.0 / SourceSize;
+    float2 invSize = 1.0 / sourceSize;
 
     float3 c00 = GAMMA_IN(tex2D(source, s0t0 * invSize).rgb);
     float3 c01 = GAMMA_IN(tex2D(source, s0t1 * invSize).rgb);
@@ -203,11 +207,12 @@ float3 Tex2DLinear(sampler2D source, float2 uv)
 
 float3 CRT1080pDoubleScan(sampler2D source, float2 uv, int2 targetSize)
 {
-    float2 prescale = ceil(GetViewportSize() / SourceSize);
+    int2 sourceSize = tex2Dsize(source);
+    float2 prescale = ceil(GetViewportSize() / sourceSize);
 
     const float2 halfp  = float2(0.5, 0.5);
 
-    float2 texel        = uv * SourceSize;
+    float2 texel        = uv * sourceSize;
     float2 texelFloored = floor(texel);
     float2 s            = frac(texel);
     float2 regionRange  = halfp - halfp / prescale;
@@ -216,8 +221,8 @@ float3 CRT1080pDoubleScan(sampler2D source, float2 uv, int2 targetSize)
     float2 f = (centerDist - clamp(centerDist, -regionRange, regionRange)) *
                 prescale + halfp;
 
-    float2 modTexel = min(texelFloored + f, SourceSize - halfp);
-    float3 color    = Tex2DLinear(source, modTexel / SourceSize);
+    float2 modTexel = min(texelFloored + f, sourceSize - halfp);
+    float3 color    = Tex2DLinear(source, modTexel / sourceSize);
 
     color = AddVGAOverlay(color, uv, targetSize);
 

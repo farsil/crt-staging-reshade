@@ -1,8 +1,6 @@
 #ifndef _RESOLUTION_FXH
 #define _RESOLUTION_FXH
 
-#include "ReShade.fxh"
-
 #ifndef SOURCE_WIDTH
     #define SOURCE_WIDTH 320
 #endif
@@ -11,7 +9,14 @@
     #define SOURCE_HEIGHT 200
 #endif
 
-static const int2 SourceSize = int2(SOURCE_WIDTH, SOURCE_HEIGHT);
+uniform int UpscalingStrategy <
+    ui_label = "Upscaling Strategy";
+    ui_type = "combo";
+    ui_items = "Y Fill\0"
+               "Y Integer\0"
+               "XY Integer\0";
+    ui_category = "Resolution";
+> = 1;
 
 uniform bool DoubleScan <
     ui_label = "Double Scan";
@@ -20,20 +25,24 @@ uniform bool DoubleScan <
 > = false;
 
 static const float2 CenterUV = 0.5;
+static const float CorrectAspectRatio = 4.0 / 3.0;
 
 int2 GetViewportSize()
 {
-#if BUFFER_WIDTH > BUFFER_HEIGHT
-    int viewportHeight = int(SOURCE_HEIGHT *
-                             floor(BUFFER_HEIGHT / SOURCE_HEIGHT));
-    int viewportWidth  = int(round(viewportHeight * 4.0 / 3.0));
-#else
-    int viewportWidth  = int(SOURCE_WIDTH *
-                             floor(BUFFER_WIDTH / SOURCE_WIDTH));
-    int viewportHeight = int(round(viewportWidth * 3.0 / 4.0));
-#endif
+    int2 size = 0;
 
-    return int2(viewportWidth, viewportHeight);
+    if (UpscalingStrategy == 0) {
+        size.y = BUFFER_HEIGHT;
+        size.x = int(round(size.y * CorrectAspectRatio));
+    } else if (UpscalingStrategy == 1) {
+        size.y = int(SOURCE_HEIGHT * floor(BUFFER_HEIGHT / SOURCE_HEIGHT));
+        size.x = int(round(size.y * CorrectAspectRatio));
+    } else if (UpscalingStrategy == 2) {
+        size.y = int(SOURCE_HEIGHT * floor(BUFFER_HEIGHT / SOURCE_HEIGHT));
+        size.x = int(SOURCE_WIDTH * round(CorrectAspectRatio * size.y / SOURCE_WIDTH));
+    }
+
+    return size;
 }
 
 float2 FromBufferUV(float2 uv, int2 size)
