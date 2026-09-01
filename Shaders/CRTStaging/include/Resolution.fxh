@@ -33,13 +33,13 @@ int2 GetViewportSize()
 
     if (UpscalingStrategy == 0) {
         size.y = BUFFER_HEIGHT;
-        size.x = int(round(size.y * CorrectAspectRatio));
+        size.x = round(size.y * CorrectAspectRatio / 2) * 2;
     } else if (UpscalingStrategy == 1) {
-        size.y = int(SOURCE_HEIGHT * floor(BUFFER_HEIGHT / SOURCE_HEIGHT));
-        size.x = int(round(size.y * CorrectAspectRatio));
+        size.y = SOURCE_HEIGHT * floor(BUFFER_HEIGHT / SOURCE_HEIGHT);
+        size.x = round(size.y * CorrectAspectRatio / 2) * 2;
     } else if (UpscalingStrategy == 2) {
-        size.y = int(SOURCE_HEIGHT * floor(BUFFER_HEIGHT / SOURCE_HEIGHT));
-        size.x = int(SOURCE_WIDTH * round(CorrectAspectRatio * size.y / SOURCE_WIDTH));
+        size.y = SOURCE_HEIGHT * floor(BUFFER_HEIGHT / SOURCE_HEIGHT);
+        size.x = round(CorrectAspectRatio * size.y / SOURCE_WIDTH) * SOURCE_WIDTH;
     }
 
     return size;
