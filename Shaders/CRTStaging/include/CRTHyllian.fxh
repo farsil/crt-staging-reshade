@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CRT_HYLLIAN_FXH
+#define CRT_HYLLIAN_FXH
 
 #include "ReShade.fxh"
 #include "MaskWeights.fxh"
@@ -124,7 +125,7 @@ float4x4 GetHFilter()
 {
     float B = 0.0;
     float C = lerp(0.0, 0.5, HorizontalFilter);
-    
+
     return float4x4(
         (-B - 6.0*C)/6.0,            (3.0*B + 12.0*C)/6.0,         (-3.0*B - 6.0*C)/6.0,             B/6.0,
         (12.0 - 9.0*B - 6.0*C)/6.0,  (-18.0 + 12.0*B + 6.0*C)/6.0,                  0.0, (6.0 - 2.0*B)/6.0,
@@ -136,7 +137,7 @@ float4x4 GetHFilter()
 float3 CRTHyllian(sampler2D source, float2 uv, int2 size)
 {
     float2 sourceResolution = tex2Dsize(source) * float2(1.0 + DoubleScan, 1.0 + DoubleScan);
-    
+
     float2 dx = lerp(float2(1.0 / sourceResolution.x, 0.0),
                      float2(0.0, 1.0 / sourceResolution.y),
                      VerticalScanlines);
@@ -188,12 +189,12 @@ float3 CRTHyllian(sampler2D source, float2 uv, int2 size)
     float pos0 = fp.y;
     float pos1 = 1.0 - fp.y;
 
-    float3 lum0 = lerp(float3(BeamWidthMin, BeamWidthMin, BeamWidthMin), 
-                       float3(BeamWidthMax, BeamWidthMax, BeamWidthMax), 
+    float3 lum0 = lerp(float3(BeamWidthMin, BeamWidthMin, BeamWidthMin),
+                       float3(BeamWidthMax, BeamWidthMax, BeamWidthMax),
                        color0);
-                       
-    float3 lum1 = lerp(float3(BeamWidthMin, BeamWidthMin, BeamWidthMin), 
-                       float3(BeamWidthMax, BeamWidthMax, BeamWidthMax), 
+
+    float3 lum1 = lerp(float3(BeamWidthMin, BeamWidthMin, BeamWidthMin),
+                       float3(BeamWidthMax, BeamWidthMax, BeamWidthMax),
                        color1);
 
     float3 d0 = 4.0 * ScanlinesStrength * pos0 / (lum0 + 0.0000001);
@@ -212,3 +213,5 @@ float3 CRTHyllian(sampler2D source, float2 uv, int2 size)
     // Output gamma
     return clamp(GAMMA_OUT(color), 0.0, 1.0);
 }
+
+#endif // CRT_HYLLIAN_FXH

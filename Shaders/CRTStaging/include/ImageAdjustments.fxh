@@ -1,4 +1,5 @@
-#pragma once
+#ifndef IMAGE_ADJUSTMENTS_FXH
+#define IMAGE_ADJUSTMENTS_FXH
 
 uniform float Saturation <
     ui_label = "Saturation";
@@ -425,7 +426,7 @@ static const float CrtBlackLevel = 0.03816404522830565;
 float3 ImageAdjustments(sampler2D source, float2 uv)
 {
     float3 color = tex2D(source, uv).rgb;
-    
+
     color = sigmoid_contrast(color, DigitalContrast);
     color = max(color, BlackLevelBoost * BlackLevelColor);
     color = saturation(color, Saturation);
@@ -450,7 +451,7 @@ float3 ImageAdjustments(sampler2D source, float2 uv)
     else if (CrtColorProfile == 3) { colorProfileTransform = sRGB_to_XYZ_Profile3; } // SMPTE C
     else if (CrtColorProfile == 4) { colorProfileTransform = sRGB_to_XYZ_Profile4; } // Philips
     else if (CrtColorProfile == 5) { colorProfileTransform = sRGB_to_XYZ_Profile5; } // Trinitron
-    
+
     // sRGB => linear RGB
     // The colour profiles are correct when using 2.2 gamma
     color = pow(color, 2.2);
@@ -460,16 +461,16 @@ float3 ImageAdjustments(sampler2D source, float2 uv)
 
     // XYZ => linear RGB
     color = mul(colorSpaceTransform, color);
-    
+
     // Use the square of the input params to achieve roughly perceptual linear
     // taper (that's close enough to ~2.2 gamma)
-    color *= float3(RedGain * RedGain, 
-                    GreenGain * GreenGain, 
+    color *= float3(RedGain * RedGain,
+                    GreenGain * GreenGain,
                     BlueGain * BlueGain);
-    
+
     // linear RGB => gamma-encoded output space
     color = pow(color, 1.0 / 2.2);
-    
+
     // gamma-encoded output space => linear RGB via CRT EOTF
     // (Electro-Optical Transform Function)
     //
@@ -477,13 +478,15 @@ float3 ImageAdjustments(sampler2D source, float2 uv)
     // CRT gamma (from 2.40 at default 0.1 CRT black level, to 2.60 at 0.0 CRT
     // black level).
     color = eotf_1886a(color, CrtBlackLevel, Brightness, Contrast);
-    
+
     // linear RGB => gamma-encoded output space
     //
     // We needed this extra gamma encode/decode roundtrip because applying the
     // CRT EOTF before the colour profile transforms would result in too
     // saturated colours.
     color = pow(color, 1.0 / (baseGamma + Gamma));
-    
+
     return color;
 }
+
+#endif // IMAGE_ADJUSTMENTS_FXH

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CRT_1080P_FXH
+#define CRT_1080P_FXH
 
 #include "ReShade.fxh"
 #include "SizeHelpers.fxh"
@@ -82,7 +83,7 @@ uniform bool DoubleScan <
         w = 1.0; \
     w = 1.0 - w * w; \
     w = w * w;
-    
+
 float3 AddVGAOverlay(float3 color, float2 uv, float2 size)
 {
     // scanlines
@@ -98,7 +99,7 @@ float3 AddVGAOverlay(float3 color, float2 uv, float2 size)
     float dimFactor = lerp(1.0 - ScanlinesStrength.y,
                            1.0 - ScanlinesStrength.x,
                            luminance);
-                           
+
     float scanlineDim = clamp(evenOdd + dimFactor, 0.0, 1.0);
 
     color *= scanlineDim;
@@ -122,18 +123,18 @@ float3 AddVGAOverlay(float3 color, float2 uv, float2 size)
 float3 CRT1080pSingleScan(sampler2D source, float2 uv, int2 targetSize)
 {
     float2 sourceSize = float2(SOURCE_WIDTH, SOURCE_HEIGHT);
-    
+
     float2 pixCoord = uv * sourceSize;
     float2 pixCenter = floor(pixCoord) + float2(0.5, 0.5);
-    
+
     float2 tc = pixCenter / sourceSize;
     float3 color = GAMMA_IN(tex2D(source, tc).rgb);
-    
+
     float dx = pixCoord.x - pixCenter.x;
     float hWeight00 = dx / SpotSize.x;
     WEIGHT(hWeight00);
     color *= hWeight00;
-    
+
     // get closest horizontal neighbour to blend
     float2 offX;
     if (dx > 0.0) {
@@ -143,7 +144,7 @@ float3 CRT1080pSingleScan(sampler2D source, float2 uv, int2 targetSize)
         offX = float2(-1.0 / SOURCE_WIDTH, 0.0);
         dx   = 1.0 + dx;
     }
-    
+
     float3 colorNb = GAMMA_IN(tex2D(source, tc + offX).rgb);
 
     float hWeight01 = dx / SpotSize.x;
@@ -186,7 +187,7 @@ float3 CRT1080pSingleScan(sampler2D source, float2 uv, int2 targetSize)
 float3 Tex2DLinear(sampler2D source, float2 uv)
 {
     float2 sourceSize = float2(SOURCE_WIDTH, SOURCE_HEIGHT);
-    
+
     // subtract 0.5 here and add it again after the floor to centre the texel
     float2 pixCoord = uv * sourceSize - float2(0.5, 0.5);
 
@@ -213,10 +214,10 @@ float3 Tex2DLinear(sampler2D source, float2 uv)
 float3 CRT1080pDoubleScan(sampler2D source, float2 uv, int2 targetSize)
 {
     float2 sourceSize = float2(SOURCE_WIDTH, SOURCE_HEIGHT);
-    float2 prescale = ceil(GetViewportSize() / sourceSize); 
-                           
+    float2 prescale = ceil(GetViewportSize() / sourceSize);
+
     const float2 halfp  = float2(0.5, 0.5);
-    
+
     float2 texel        = uv * sourceSize;
     float2 texelFloored = floor(texel);
     float2 s            = frac(texel);
@@ -242,3 +243,5 @@ float3 CRT1080p(sampler2D source, float2 uv, int2 targetSize)
         return CRT1080pSingleScan(source, uv, targetSize);
     }
 }
+
+#endif // CRT_1080P_FXH
