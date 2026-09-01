@@ -1,12 +1,12 @@
 #include "ReShade.fxh"
-#include "SizeHelpers.fxh"
-#include "ImageAdjustments.fxh"
+#include "include/SizeHelpers.fxh"
+#include "include/ImageAdjustments.fxh"
 
 #if BUFFER_HEIGHT > 1080
-    #include "CRTHyllian.fxh"
+    #include "include/CRTHyllian.fxh"
     #define CRT_EMULATION CRTHyllian
 #else
-    #include "CRT1080p.fxh"
+    #include "include/CRT1080p.fxh"
     #define CRT_EMULATION CRT1080p
 #endif
 
