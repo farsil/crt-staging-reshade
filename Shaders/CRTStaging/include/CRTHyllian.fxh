@@ -91,7 +91,11 @@ uniform int HorizontalFilter <
     ui_label = "Horizontal Filter";
     ui_type  = "combo";
     ui_items = "Hermite\0"
-               "Catmull-Rom\0";
+               "Cubic B-Spline\0"
+               "Catmull-Rom\0"
+               "Mitchell-Netravali\0"
+               "Robidoux\0"
+               "Robidoux Sharp\0";
     ui_category = "CRT Emulation";
 > = 0;
 
@@ -102,22 +106,16 @@ uniform bool VerticalScanlines <
 > = false;
 
 // Horizontal cubic filter.
-//
-// Some known filters use these values:
-//
-//   B = 0.0, C = 0.0  =>  Hermite cubic filter.
-//   B = 1.0, C = 0.0  =>  Cubic B-Spline filter.
-//   B = 0.0, C = 0.5  =>  Catmull-Rom Spline filter.
-//   B = C = 1.0/3.0   =>  Mitchell-Netravali cubic filter.
-//   B = 0.3782, C = 0.3109  =>  Robidoux filter.
-//   B = 0.2620, C = 0.3690  =>  Robidoux Sharp filter.
-
-// Using only Hermite and Catmull-Rom, as the others aren't useful for crt shader.
-// For more info, see: http://www.imagemagick.org/Usage/img_diagrams/cubic_survey.gif
 float4x4 GetHFilter()
 {
     float B = 0.0;
-    float C = lerp(0.0, 0.5, HorizontalFilter);
+    float C = 0.0;
+
+    if (HorizontalFilter == 1) { B = 1.0; C = 0.0; }       // Cubic B-Spline
+    if (HorizontalFilter == 2) { B = 0.0; C = 0.5; }       // Catmull-Rom
+    if (HorizontalFilter == 3) { B = 0.3333; C = 0.3333; } // Mitchell-Netravali
+    if (HorizontalFilter == 4) { B = 0.3782; C = 0.3109; } // Robidoux
+    if (HorizontalFilter == 5) { B = 0.2620; C = 0.3690; } // Robidoux Sharp
 
     return float4x4(
         (-B - 6.0*C)/6.0,            (3.0*B + 12.0*C)/6.0,         (-3.0*B - 6.0*C)/6.0,             B/6.0,
@@ -130,7 +128,7 @@ float4x4 GetHFilter()
 float3 CRTHyllian(sampler2D source, float2 uv, int2 size)
 {
     int2 sourceSize = tex2Dsize(source);
-    
+
     float2 sourceResolution = sourceSize * (1.0 + DoubleScan);
 
     float2 dx = lerp(float2(1.0 / sourceResolution.x, 0.0),
@@ -166,7 +164,7 @@ float3 CRTHyllian(sampler2D source, float2 uv, int2 size)
     float3 color0     = mul(hFilterPx, colorMatrix0);
     float3 color1     = mul(hFilterPx, colorMatrix1);
 
-    //  Get min/max samples
+    // Get min/max samples
     float3 minSample0 = min(c01, c02);
     float3 maxSample0 = max(c01, c02);
     float3 minSample1 = min(c11, c12);

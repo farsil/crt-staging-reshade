@@ -110,13 +110,7 @@ uniform float Gamma <
     ui_category = "Image Adjustments";
 > = 0.0;
 
-// Adapted from 'WinUaeColor.fx'
-// https://github.com/guestrr/WinUAE-Shaders/
-//
-// Copyright (C) 2020 guest(r), Dr. Venom - guest.r@gmail.com
-
 // Color profile transforms (sRGB to XYZ)
-
 float3x3 GetColorProfileTransform(int crtProfile) {
     switch (crtProfile) {
         case 1: // EBU
@@ -159,7 +153,6 @@ float3x3 GetColorProfileTransform(int crtProfile) {
 }
 
 // Colour space transforms (XYZ to linear RGB in target colour space)
-
 float3x3 GetColorSpaceTransform(int colorSpace) {
     switch (colorSpace) {
         case 1: // DCI-P3
@@ -221,11 +214,6 @@ float Luminance(float3 color)
     return dot(color, float3(0.212656, 0.715158, 0.072186));
 }
 
-// Adaptred from Guest's 'pre-shaders-afterglow.slang'
-// Copyright (C) 2019-2025 guest(r) and Dr. Venom
-//
-// Source: https://github.com/libretro/slang-shaders/blob/cf5c768ffda2520d4938df68d33fd63fff276c0c/crt/shaders/guest/advanced/pre-shaders-afterglow.slang
-//
 float3 Plant(float3 tar, float r)
 {
     float t = max(max(tar.r, tar.g), tar.b) + 0.00001;
@@ -241,12 +229,6 @@ float3 SigmoidContrast(float3 color, float amount)
     float c = max(lerp(x, smoothstep(0.0, 1.0, x), amount), 0.0);
     return Plant(color, c);
 }
-
-// Adapted from `PR80_00_Base_Effects.fxh` by prod80 (Bas Veth)
-// https://github.com/prod80/prod80-ReShade-Repository/
-//
-// MIT License, Copyright (c) 2020 prod80
-//
 
 // Expects gamma-encoded color
 float3 RGBToHCV(float3 color)
@@ -337,11 +319,6 @@ float3 ColorTemperature(float3 color, int kelvin, float luma_preserve)
     return lerp(color, color2, luma_preserve);
 }
 
-// Adapted from Dogway's 'pre-shaders-afterglow-grade.slang'
-// Copyright (C) 2020-2023 Dogway (Jose Linares)
-//
-// Source: https://github.com/libretro/slang-shaders/blob/cf5c768ffda2520d4938df68d33fd63fff276c0c/crt/shaders/guest/advanced/grade/pre-shaders-afterglow-grade.slang
-//
 float EOTF1886A(float color, float blackLevel, float brightness, float contrast)
 {
     const float whiteLevel = 100.0;
@@ -403,7 +380,7 @@ float3 ImageAdjustments(sampler2D source, float2 uv)
     color = ColorTemperature(color,
                              ColorTemperatureK,
                              ColorTemperatureLumaPreserve);
-    
+
     // sRGB => linear RGB
     // The colour profiles are correct when using 2.2 gamma
     color = pow(color, 2.2);

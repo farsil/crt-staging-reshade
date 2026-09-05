@@ -4,38 +4,6 @@
 #include "ReShade.fxh"
 #include "Macros.fxh"
 
-/*
-    A collection of CRT mask effects that work with LCD subpixel structures for
-    small details
-
-    author: hunterk
-    license: public domain
-
-    How to use it:
-
-    Multiply your image by the float3 output:
-    FragColor.rgb *= mask_weights(gl_FragCoord.xy, 1.0, 1);
-
-    The function needs to be tiled across the screen using the physical pixels, e.g.
-    gl_FragCoord (the "float2 coord" input). In the case of slang shaders, we use
-    (vTexCoord.st * OutputSize.xy).
-
-    The "maskIntensity" (float value between 0.0 and 1.0) is how strong the mask
-    effect should be. Full-strength red, green and blue subpixels on a white pixel
-    are the ideal, and are achieved with an intensity of 1.0, though this darkens
-    the image significantly and may not always be desirable.
-
-    The "phosphorLayout" (int value between 0 and 19) determines which phophor
-    layout to apply. 0 is no mask/passthru.
-
-    Many of these mask arrays are adapted from cgwg's crt-geom-deluxe LUTs, and
-    those have their filenames included for easy identification
-
-    NOTE: Having too many branches result in a black screen (but no
-    compilation errors) on some older GPUs such as the Intel HD 4000 iGPU. So
-    we're commenting out the branches that are not used by the adaptive CRT
-    shaders.
-*/
 float3 MaskWeights(float2 coord, float maskIntensity, int phosphorLayout)
 {
     float3 weights = 1.0;

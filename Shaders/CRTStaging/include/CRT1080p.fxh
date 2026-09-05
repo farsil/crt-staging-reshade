@@ -115,7 +115,7 @@ float3 AddVGAOverlay(float3 color, float2 uv, float2 size)
 float3 CRT1080pSingleScan(sampler2D source, float2 uv, int2 targetSize)
 {
     int2 sourceSize = tex2Dsize(source);
-    
+
     float2 pixCoord = uv * sourceSize;
     float2 pixCenter = floor(pixCoord) + float2(0.5, 0.5);
 
@@ -144,7 +144,6 @@ float3 CRT1080pSingleScan(sampler2D source, float2 uv, int2 targetSize)
 
     color = color + colorNb * hWeight01;
 
-    //////////////////////////////////////////////////////
     // Vertical Blending
     float dy          = pixCoord.y - pixCenter.y;
     float vWeight00   = dy / SpotSize.y;

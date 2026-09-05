@@ -46,7 +46,7 @@ float3 CRTEmulationPS(float2 bufferUV : TEXCOORD) : SV_Target
     float2 viewportUV = FromBufferUV(bufferUV, viewportSize);
 
     if (any(viewportUV < 0.0) || any(viewportUV > 1.0))
-        discard;
+        return 0.0;
 
     return CRT1080p(AdjustedImageSampler, viewportUV, viewportSize);
 }
