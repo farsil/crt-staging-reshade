@@ -15,23 +15,14 @@ uniform float ScanlinesStrength <
     ui_category = "CRT Emulation";
 > = 0.75;
 
-uniform float BeamWidthMin <
-    ui_label = "Min Beam Width";
+uniform float2 BeamWidth <
+    ui_label = "Beam Width (Min / Max)";
     ui_type  = "drag";
     ui_min   = 0.0;
     ui_max   = 2.0;
     ui_step  = 0.01;
     ui_category = "CRT Emulation";
-> = 1.0;
-
-uniform float BeamWidthMax <
-    ui_label = "Max Beam Width";
-    ui_type  = "drag";
-    ui_min   = 0.0;
-    ui_max   = 2.0;
-    ui_step  = 0.01;
-    ui_category = "CRT Emulation";
-> = 1.20;
+> = float2(1.0, 1.20);
 
 uniform float ColorBoost <
     ui_label = "Color Boost";
@@ -182,12 +173,12 @@ float3 CRTHyllian(sampler2D source, float2 uv, int2 size)
     float pos0 = fp.y;
     float pos1 = 1.0 - fp.y;
 
-    float3 lum0 = lerp(float3(BeamWidthMin, BeamWidthMin, BeamWidthMin),
-                       float3(BeamWidthMax, BeamWidthMax, BeamWidthMax),
+    float3 lum0 = lerp(float3(BeamWidth.x, BeamWidth.x, BeamWidth.x),
+                       float3(BeamWidth.y, BeamWidth.y, BeamWidth.y),
                        color0);
 
-    float3 lum1 = lerp(float3(BeamWidthMin, BeamWidthMin, BeamWidthMin),
-                       float3(BeamWidthMax, BeamWidthMax, BeamWidthMax),
+    float3 lum1 = lerp(float3(BeamWidth.x, BeamWidth.x, BeamWidth.x),
+                       float3(BeamWidth.y, BeamWidth.y, BeamWidth.y),
                        color1);
 
     float3 d0 = 4.0 * ScanlinesStrength * pos0 / (lum0 + 0.0000001);
