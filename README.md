@@ -5,7 +5,7 @@ A ReShade port of the collection of CRT shaders used in the
 
 <img width="667" height="500" alt="np21w-popfulmail" src="https://github.com/user-attachments/assets/03ce7964-0ece-4d6b-a114-6a873e29fac4" />
 
-*Popful Mail on Neko Project 21W, using CRT Hyllian @ 4K
+*Popful Mail on Neko Project 21W, using VGA 4K preset
 ([click to enlarge](https://github.com/user-attachments/assets/03ce7964-0ece-4d6b-a114-6a873e29fac4))*
 
 ## The Shaders
@@ -25,6 +25,12 @@ scanning (as it was the case for most VGA games).
 In general, you should use the 1080p shaders if the source height is more than
 320 pixels (160 pixels) when the source image is single scanned (double
 scanned).
+
+## The Presets
+
+This repository includes several preset templates that can be used as a quick
+start to emulate various CRT monitors. You still need to set the source size
+via the preprocessor directives. VGA presets are double scanned by default.
 
 ## Configuration settings
 
@@ -271,4 +277,4 @@ emulation.
 
 And of course the DOSBox Staging team for putting everything together into the
 shaders I converted to the ReShade format and for writing the image adjustments
-documentation.
+documentation and the presets.
