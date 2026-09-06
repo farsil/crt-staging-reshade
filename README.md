@@ -3,6 +3,11 @@
 A ReShade port of the collection of CRT shaders used in the
 [DOSBox Staging](https://www.dosbox-staging.org/) project.
 
+<img width="667" height="500" alt="np21w-popfulmail" src="https://github.com/user-attachments/assets/03ce7964-0ece-4d6b-a114-6a873e29fac4" />
+
+*Popful Mail on Neko Project 21W, using CRT Hyllian @ 4K
+([click to enlarge](https://github.com/user-attachments/assets/03ce7964-0ece-4d6b-a114-6a873e29fac4))*
+
 ## The Shaders
 
 This repository provides three different shaders (note that the 1080p shaders
