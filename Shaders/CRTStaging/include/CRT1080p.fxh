@@ -76,7 +76,7 @@ uniform float OutputGamma <
     w = 1.0 - w * w; \
     w = w * w;
 
-float3 AddVGAOverlay(float3 color, float2 uv, float2 size)
+float3 AddOverlay(float3 color, float2 uv, float2 size)
 {
     // scanlines
     float2 maskCoords = uv * size;
@@ -170,7 +170,7 @@ float3 CRT1080pSingleScan(sampler2D source, float2 uv, int2 targetSize)
 
     color = color + colorNb * vWeight10 * hWeight01;
 
-    color = AddVGAOverlay(color, uv, targetSize);
+    color = AddOverlay(color, uv, targetSize);
 
     return clamp(GAMMA_OUT(color), 0.0, 1.0);
 }
@@ -221,7 +221,7 @@ float3 CRT1080pDoubleScan(sampler2D source, float2 uv, int2 targetSize)
     float2 modTexel = min(texelFloored + f, sourceSize - halfp);
     float3 color    = Tex2DLinear(source, modTexel / sourceSize);
 
-    color = AddVGAOverlay(color, uv, targetSize);
+    color = AddOverlay(color, uv, targetSize);
 
     return clamp(GAMMA_OUT(color), 0.0, 1.0);
 }
