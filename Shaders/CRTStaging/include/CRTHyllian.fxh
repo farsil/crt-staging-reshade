@@ -90,12 +90,6 @@ uniform int HorizontalFilter <
     ui_category = "CRT Emulation";
 > = 0;
 
-uniform bool VerticalScanlines <
-    ui_label = "Vertical Scanlines";
-    ui_type  = "radio";
-    ui_category = "CRT Emulation";
-> = false;
-
 // Horizontal cubic filter.
 float4x4 GetHFilter()
 {
@@ -122,21 +116,15 @@ float3 CRTHyllian(sampler2D source, float2 uv, int2 size)
 
     float2 sourceResolution = sourceSize * (1.0 + DoubleScan);
 
-    float2 dx = lerp(float2(1.0 / sourceResolution.x, 0.0),
-                     float2(0.0, 1.0 / sourceResolution.y),
-                     VerticalScanlines);
+    float2 dx = float2(1.0 / sourceResolution.x, 0.0);
 
-    float2 dy = lerp(float2(0.0, 1.0 / sourceResolution.y),
-                     float2(1.0 / sourceResolution.x, 0.0),
-                     VerticalScanlines);
+    float2 dy = float2(0.0, 1.0 / sourceResolution.y);
 
     float2 pixCoord = uv * sourceResolution + float2(-0.5, 0.5);
 
-    float2 tc = lerp((floor(pixCoord) + float2(0.5,  0.5)) / sourceResolution,
-                     (floor(pixCoord) + float2(1.0, -0.5)) / sourceResolution,
-                     VerticalScanlines);
+    float2 tc = (floor(pixCoord) + float2(0.5,  0.5)) / sourceResolution;
 
-    float2 fp = lerp(frac(pixCoord), frac(pixCoord.yx), VerticalScanlines);
+    float2 fp = frac(pixCoord);
 
     float3 c00 = GAMMA_IN(tex2D(source, tc - dx     - dy));
     float3 c01 = GAMMA_IN(tex2D(source, tc          - dy));
@@ -191,7 +179,6 @@ float3 CRTHyllian(sampler2D source, float2 uv, int2 size)
 
     // Mask
     float2 maskCoords = uv * size;
-    maskCoords        = lerp(maskCoords.xy, maskCoords.yx, VerticalScanlines);
     color.rgb         *= MaskWeights(maskCoords, MaskIntensity, PhosphorLayout);
 
     // Output gamma
