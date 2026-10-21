@@ -275,6 +275,6 @@ Credits go to Guest(r), prod80 and Dogway for the image adjustment shader,
 Hyllian for the shader with the same name, hunterk for the phosphor mask
 emulation.
 
-I would also like to thank [John Novak]([link to my github](https://github.com/johnnovak))
+I would also like to thank [John Novak](https://github.com/johnnovak)
 from the DOSBox Staging team for building these shaders in DOSBox Staging, for
 writing the image adjustments documentation and the shader presets.
