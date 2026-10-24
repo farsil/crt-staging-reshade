@@ -57,7 +57,7 @@ uniform int ColorSpace <
                "DCI-P3 D65\0"
                "Display P3\0"
                "Modern DCI-P3\0"
-               "Adobe RGB 2020\0"
+               "Adobe RGB\0"
                "Rec.2020\0";
     ui_category = "Image Adjustments";
 > = 0;
@@ -110,7 +110,7 @@ uniform float Gamma <
     ui_category = "Image Adjustments";
 > = 0.0;
 
-// Color profile transforms (sRGB to XYZ)
+// Color profile transforms (linear RGB to XYZ)
 float3x3 GetColorProfileTransform(int crtProfile) {
     switch (crtProfile) {
         case 1: // EBU
@@ -152,7 +152,7 @@ float3x3 GetColorProfileTransform(int crtProfile) {
     }
 }
 
-// Colour space transforms (XYZ to linear RGB in target colour space)
+// Color space transforms (XYZ to linear RGB in target color space)
 float3x3 GetColorSpaceTransform(int colorSpace) {
     switch (colorSpace) {
         case 1: // DCI-P3
@@ -382,7 +382,7 @@ float3 ImageAdjustments(sampler2D source, float2 uv)
                              ColorTemperatureLumaPreserve);
 
     // sRGB => linear RGB
-    // The colour profiles are correct when using 2.2 gamma
+    // The color profiles are correct when using 2.2 gamma
     color = pow(color, 2.2);
 
     // linear RGB => XYZ (with optional color profile transform)
@@ -396,7 +396,7 @@ float3 ImageAdjustments(sampler2D source, float2 uv)
     color *= ColorGain * ColorGain;
 
     // linear RGB => gamma-encoded output space
-    color = pow(color, 1.0 / 2.2);
+    color = pow(max(color, 0.0), 1.0 / 2.2);
 
     // gamma-encoded output space => linear RGB via CRT EOTF
     // (Electro-Optical Transform Function)
@@ -409,8 +409,8 @@ float3 ImageAdjustments(sampler2D source, float2 uv)
     // linear RGB => gamma-encoded output space
     //
     // We needed this extra gamma encode/decode roundtrip because applying the
-    // CRT EOTF before the colour profile transforms would result in too
-    // saturated colours.
+    // CRT EOTF before the color profile transforms would result in too
+    // saturated colors.
     color = pow(color, 1.0 / (GetBaseGamma(ColorSpace) + Gamma));
 
     return color;

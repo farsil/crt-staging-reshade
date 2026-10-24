@@ -138,9 +138,9 @@ Possible values:
            baked into the profile. Needs a DCI-P3 display for the most accurate
            results.
 - Trinitron: typical Sony Trinitron CRT TV and monitor colors. Intended to be
-             used with color_temperature set to 6500. Output looks blueish due
-             to the ~9300 K color temperature baked into the profile.
-             Needs a DCI-P3 display for the most accurate results.
+             used with color_temperature set to 6500. Output looks
+             blueish-green due to the ~7800 K color temperature baked into
+             the profile. Needs a DCI-P3 display for the most accurate results.
 
 #### Color Gain
 
