@@ -35,10 +35,27 @@ uniform float ColorBoost <
 
 uniform int PhosphorLayout <
     ui_label = "Phosphor Layout";
-    ui_type  = "drag";
-    ui_min   = 0;
-    ui_max   = 19;
-    ui_step  = 1;
+    ui_type  = "combo";
+    ui_items = "None\0"
+               "Aperture Grille 2px (MG)\0"
+               "Shadow Mask 2px (MG)\0"
+               "Slot Mask 2px (MG)\0"
+               "Aperture Grille 2px (YB)\0"
+               "Shadow Mask 2px (YB)\0"
+               "Aperture Grille 4px (RGBX)\0"
+               "Aperture Grille 5px (RBG)\0"
+               "Aperture Grille 7px (RGB)\0"
+               "Aperture Grille 4px (RYCB)\0"
+               "Aperture Grille 4px (RMCG)\0"
+               "Shadow Mask 4px (RGBX)\0"
+               "Shadow Mask 4px (RYCB)\0"
+               "Shadow Mask 4px (RYCB, 2-line)\0"
+               "Slot Mask 3px (MG)\0"
+               "Slot Mask 4px (RYCB)\0"
+               "Slot Mask 2px (YB)\0"
+               "Slot Mask 5px (RBG)\0"
+               "Slot Mask 5px (RGB)\0"
+               "Slot Mask 7px (RGB)\0";
     ui_category = "CRT Emulation";
 > = 0;
 

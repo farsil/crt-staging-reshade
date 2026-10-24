@@ -219,9 +219,10 @@ setting is applied to the source image, before the CRT emulation shader.
 ✓ 1080p single scan
 ✓ 1080p double scan
 
-Sets the emulated phosphor layout (0 by default). 0 means no shadow mask
-emulation. In general, lower values look better at 1080p, while higher values
-tend to be better at higher resolutions.
+Sets the emulated phosphor layout (None by default). In general, smaller
+pattern widths in pixels look better at 1080p, while larger patterns,
+especially those simulating slot masks, tend to look better at higher
+resolutions.
 
 #### Mask Intensity
 
